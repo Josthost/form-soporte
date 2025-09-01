@@ -19,7 +19,7 @@ function App() {
       <main className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-lg p-6 md:p-8 border-t-4" style={{ borderTopColor: '#8F8967' }}>
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2" style={{ color: '#000000' }}>Formulario de Solicitud de Soporte</h2>
+            <h2 className="text-2xl font-bold mb-2" style={{ color: '#000285' }}>Formulario de Solicitud de Soporte</h2>
             <p className="max-w-2xl mx-auto" style={{ color: '#8F8967' }}>
               Complete el siguiente formulario para solicitar asistencia técnica. 
               Un miembro de nuestro equipo revisará su solicitud y se pondrá en contacto con usted a la brevedad.
