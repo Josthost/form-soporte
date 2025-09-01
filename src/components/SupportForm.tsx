@@ -6,53 +6,131 @@ import { FormData, FormErrors } from '../types/formTypes';
 import { validateForm } from '../utils/validation';
 import { sendEmail } from '../utils/emailService';
 
-const DEPARTMENTS_AND_DIVISIONS = {
-  'direccion-general': {
-    label: 'Dirección General',
-    divisions: [
-      { value: 'secretaria-general', label: 'Secretaría General' },
-      { value: 'asesoria-juridica', label: 'Asesoría Jurídica' },
-      { value: 'planificacion', label: 'Planificación y Presupuesto' }
-    ]
-  },
-  'servicios-bibliotecarios': {
-    label: 'Servicios Bibliotecarios',
-    divisions: [
-      { value: 'catalogacion', label: 'Catalogación y Clasificación' },
-      { value: 'referencia', label: 'Referencia y Consulta' },
-      { value: 'circulacion', label: 'Circulación y Préstamo' },
-      { value: 'hemeroteca', label: 'Hemeroteca' }
-    ]
-  },
-  'colecciones-especiales': {
-    label: 'Colecciones Especiales',
-    divisions: [
-      { value: 'manuscritos', label: 'Manuscritos y Archivos' },
-      { value: 'mapoteca', label: 'Mapoteca' },
-      { value: 'audiovisuales', label: 'Audiovisuales' },
-      { value: 'patrimonio', label: 'Patrimonio Bibliográfico' }
-    ]
-  },
-  'tecnologia': {
-    label: 'Tecnología e Información',
-    divisions: [
-      { value: 'sistemas', label: 'Sistemas y Redes' },
-      { value: 'digitalizacion', label: 'Digitalización' },
-      { value: 'soporte-tecnico', label: 'Soporte Técnico' },
-      { value: 'desarrollo-web', label: 'Desarrollo Web' }
-    ]
-  },
-  'administracion': {
-    label: 'Administración',
-    divisions: [
-      { value: 'recursos-humanos', label: 'Recursos Humanos' },
-      { value: 'contabilidad', label: 'Contabilidad' },
-      { value: 'compras', label: 'Compras y Suministros' },
-      { value: 'mantenimiento', label: 'Mantenimiento' }
-    ]
-  }
-};
+const DEPARTMENTS = [
+  { value: 'Dirección General', label: 'Dirección General' },
+  { value: 'Consultoría Jurídica', label: 'Consultoría Jurídica' },
+  { value: 'Auditoría Jurídica', label: 'Auditoría Jurídica' },
+  { value: 'Oficina de Planificacion Estrategica y Control de Gestión', label: 'Oficina de Planificacion Estrategica y Control de Gestión' },
+  { value: 'Oficina de Comunicación e Imagen Institucional', label: 'Oficina de Comunicación e Imagen Institucional' },
+  { value: 'Oficina de Administración', label: 'Oficina de Administración' },
+  { value: 'Oficina de Recursos Humanos', label: 'Oficina de Recursos Humanos' },
+  { value: 'Oficina de Técnologia de la Información', label: 'Oficina de Técnologia de la Información' },
+  { value: 'Oficina de Mantenimiento de Servicios Generales', label: 'Oficina de Mantenimiento de Servicios Generales' },
+  { value: 'Seguridad Integral', label: 'Seguridad Integral' },
+  { value: 'Extensión Cultural', label: 'Extensión Cultural' },
+  { value: 'Dirección de Programa de Servicios de la Biblioteca Nacional', label: 'Dirección de Programa de Servicios de la Biblioteca Nacional' },
+  { value: 'Dirección de Programa de Servicios Bibliotecas Públicas', label: 'Dirección de Programa de Servicios Bibliotecas Públicas' },
+  { value: 'Dirección de programa de Servicios Técnicos Bibliotecarios', label: 'Dirección de programa de Servicios Técnicos Bibliotecarios' },
+  { value: 'Dirección de Orientación y Referencia', label: 'Dirección de Orientación y Referencia' },
+  { value: 'Dirección Colección Bibliográfica', label: 'Dirección Colección Bibliográfica' },
+  { value: 'Dirección Colección Audiovisual', label: 'Dirección Colección Audiovisual' },
+  { value: 'Dirección de la Red Metropolitana de Bibliotecas Públicas', label: 'Dirección de la Red Metropolitana de Bibliotecas Públicas' },
+  { value: 'Dirección de Redes Estatales de Bilbiotecas Públicas', label: 'Dirección de Redes Estatales de Bilbiotecas Públicas' },
+  { value: 'Dirección de Desarrollo de Colecciones', label: 'Dirección de Desarrollo de Colecciones' },
+  { value: 'Dirección de Procesos Técnicos', label: 'Dirección de Procesos Técnicos' },
+  { value: 'Dirección del Centro Nacional de Preservación Documental', label: 'Dirección del Centro Nacional de Preservación Documental' },
+];
 
+const DIVISIONS_BY_DEPARTMENT: Record<string, { value: string; label: string }[]> = {
+  'Dirección General': [
+    { value: 'Archivo General', label: 'Archivo General' },
+    { value: 'Apoyo Administrativo', label: 'Apoyo Administrativo' },
+    { value: 'Servicios Generales', label: 'Servicios Generales' },
+  ],
+  'Consultoría Jurídica': [
+    { value: 'Consultoría Jurídica', label: 'Consultoría Jurídica' },
+  ],
+  'Auditoría Jurídica': [
+    { value: 'Auditoría de Gestión', label: 'Auditoría de Gestión' },
+    { value: 'Auditoría Financiera', label: 'Auditoría Financiera' },
+    { value: 'Averiguaciones Administrativa', label: 'Averiguaciones Administrativa' },
+  ],
+  'Oficina de Planificacion Estrategica y Control de Gestión': [
+    { value: 'Planes, Programas y Proyectos', label: 'Planes, Programas y Proyectos' },
+    { value: 'Presupuesto', label: 'Presupuesto' },
+    { value: 'Desarrollo Organizacional', label: 'Desarrollo Organizacional' },
+    { value: 'Investigación y Estadística', label: 'Investigación y Estadística' },
+  ],
+  'Oficina de Comunicación e Imagen Institucional': [
+    { value: 'Publicaciones Institucionales', label: 'Publicaciones Institucionales' },
+    { value: 'Coordinación de Publicaciones Divulgativas', label: 'Coordinación de Publicaciones Divulgativas' },
+    { value: 'Coordinación de Producción Audiovisual', label: 'Coordinación de Producción Audiovisual' },
+  ],
+  'Oficina de Administración': [
+    { value: 'Compras', label: 'Compras' },
+    { value: 'Finanzas', label: 'Finanzas' },
+    { value: 'Contabilidad', label: 'Contabilidad' },
+  ],
+  'Oficina de Recursos Humanos': [
+    { value: 'Desarrollo y Gestión Humana', label: 'Desarrollo y Gestión Humana' },
+    { value: 'Nomina y Gestión Administrativa', label: 'Nomina y Gestión Administrativa' },
+    { value: 'Bienestar Social', label: 'Bienestar Social' },
+  ],
+  'Oficina de Técnologia de la Información': [
+    { value: 'Sistemas', label: 'Sistemas' },
+    { value: 'Atención Técnologica', label: 'Atención Técnologica' },
+  ],
+  'Oficina de Mantenimiento de Servicios Generales': [
+    { value: 'Servicios Internos', label: 'Servicios Internos' },
+    { value: 'Servicios Contratados', label: 'Servicios Contratados' },
+    { value: 'Equipos y Sistemas', label: 'Equipos y Sistemas' },
+    { value: 'Infrastructura', label: 'Infrastructura' },
+  ],
+  'Seguridad Integral': [
+    { value: 'Seguridad Fisica', label: 'Seguridad Fisica' },
+    { value: 'Técnologia de Seguridad', label: 'Técnologia de Seguridad' },
+    { value: 'Higiene y Control de Riesgo', label: 'Higiene y Control de Riesgo' },
+  ],
+  'Extensión Cultural': [
+    { value: 'Producción y Montaje', label: 'Producción y Montaje' },
+    { value: 'Programación y Promoción', label: 'Programación y Promoción' },
+  ],
+  'Dirección de Programa de Servicios de la Biblioteca Nacional': [
+    { value: 'Sin División', label: 'Sin División' },
+  ],
+  'Dirección de Programa de Servicios Bibliotecas Públicas': [
+    { value: 'Desarrollo de Servicios Especiales de Información', label: 'Desarrollo de Servicios Especiales de Información' },
+  ],
+  'Dirección de programa de Servicios Técnicos Bibliotecarios': [
+    { value: 'Normalización Técnica', label: 'Normalización Técnica' },
+  ],
+  'Dirección de Orientación y Referencia': [
+    { value: 'Documentación e Información Bibliotecológica', label: 'Documentación e Información Bibliotecológica' },
+  ],
+  'Dirección Colección Bibliográfica': [
+    { value: 'Colección Documental Antigua', label: 'Colección Documental Antigua' },
+    { value: 'Colección Tulio Febres Cordero (Mérida)', label: 'Colección Tulio Febres Cordero (Mérida)' },
+    { value: 'Colección Bibliográfica Contemporanea', label: 'Colección Bibliográfica Contemporanea' },
+  ],
+  'Dirección Colección Audiovisual': [
+    { value: 'Colección Sonido y Cine', label: 'Colección Sonido y Cine' },
+    { value: 'Colección Obras Planas', label: 'Colección Obras Planas' },
+  ],
+  'Dirección de la Red Metropolitana de Bibliotecas Públicas': [
+    { value: 'BPC Simón Rodríguez', label: 'BPC Simón Rodríguez' },
+  ],
+  'Dirección de Redes Estatales de Bilbiotecas Públicas': [
+    { value: 'Sin división', label: 'Sin división' },
+  ],
+  'Dirección de Desarrollo de Colecciones': [
+    { value: 'Recepción y Distribución', label: 'Recepción y Distribución' },
+    { value: 'Adquisiciones', label: 'Adquisiciones' },
+    { value: 'Depósito Legal', label: 'Depósito Legal' },
+    { value: 'Control y Evaluación', label: 'Control y Evaluación' },
+  ],
+  'Dirección de Procesos Técnicos': [
+    { value: 'Registro', label: 'Registro' },
+    { value: 'Control de Calidad', label: 'Control de Calidad' },
+    { value: 'Catalogación y Clasificación de Materiales Bibliográficos y Seriado', label: 'Catalogación y Clasificación de Materiales Bibliográficos y Seriado' },
+    { value: 'Catalogación y Clasificación de Materiales Audiovisuales', label: 'Catalogación y Clasificación de Materiales Audiovisuales' },
+  ],
+  'Dirección del Centro Nacional de Preservación Documental': [
+    { value: 'Preservación de Colecciones', label: 'Preservación de Colecciones' },
+    { value: 'Conservación de Colecciones', label: 'Conservación de Colecciones' },
+    { value: 'Micrografía', label: 'Micrografía' },
+    { value: 'Preservación por Duplicados', label: 'Preservación por Duplicados' },
+  ],
+};
 const SUPPORT_AREAS = [
   { value: 'soporte-tecnico', label: 'Soporte Técnico' },
   { value: 'redes-internet', label: 'Redes e Internet' },
@@ -76,7 +154,7 @@ const SupportForm: React.FC = () => {
   // Get available divisions based on selected department
   const getAvailableDivisions = () => {
     if (!formData.department) return [];
-    return DEPARTMENTS_AND_DIVISIONS[formData.department as keyof typeof DEPARTMENTS_AND_DIVISIONS]?.divisions || [];
+    return DIVISIONS_BY_DEPARTMENT[formData.department] || [];
   };
 
   const handleChange = (
@@ -165,10 +243,7 @@ const SupportForm: React.FC = () => {
             onChange={handleChange}
             error={errors.department}
             required
-            options={Object.entries(DEPARTMENTS_AND_DIVISIONS).map(([value, dept]) => ({
-              value,
-              label: dept.label
-            }))}
+            options={DEPARTMENTS}
           />
           
           <FormField
