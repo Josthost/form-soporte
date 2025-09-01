@@ -47,7 +47,7 @@ const FormField: React.FC<FormFieldProps> = ({
           }`}
           style={{ 
             focusRingColor: '#000285',
-            color: '#000285'
+            color: '#000000'
           }}
         >
           <option value="">-- Seleccionar --</option>
