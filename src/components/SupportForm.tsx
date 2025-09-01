@@ -6,6 +6,53 @@ import { FormData, FormErrors } from '../types/formTypes';
 import { validateForm } from '../utils/validation';
 import { sendEmail } from '../utils/emailService';
 
+const DEPARTMENTS_AND_DIVISIONS = {
+  'direccion-general': {
+    label: 'Dirección General',
+    divisions: [
+      { value: 'secretaria-general', label: 'Secretaría General' },
+      { value: 'asesoria-juridica', label: 'Asesoría Jurídica' },
+      { value: 'planificacion', label: 'Planificación y Presupuesto' }
+    ]
+  },
+  'servicios-bibliotecarios': {
+    label: 'Servicios Bibliotecarios',
+    divisions: [
+      { value: 'catalogacion', label: 'Catalogación y Clasificación' },
+      { value: 'referencia', label: 'Referencia y Consulta' },
+      { value: 'circulacion', label: 'Circulación y Préstamo' },
+      { value: 'hemeroteca', label: 'Hemeroteca' }
+    ]
+  },
+  'colecciones-especiales': {
+    label: 'Colecciones Especiales',
+    divisions: [
+      { value: 'manuscritos', label: 'Manuscritos y Archivos' },
+      { value: 'mapoteca', label: 'Mapoteca' },
+      { value: 'audiovisuales', label: 'Audiovisuales' },
+      { value: 'patrimonio', label: 'Patrimonio Bibliográfico' }
+    ]
+  },
+  'tecnologia': {
+    label: 'Tecnología e Información',
+    divisions: [
+      { value: 'sistemas', label: 'Sistemas y Redes' },
+      { value: 'digitalizacion', label: 'Digitalización' },
+      { value: 'soporte-tecnico', label: 'Soporte Técnico' },
+      { value: 'desarrollo-web', label: 'Desarrollo Web' }
+    ]
+  },
+  'administracion': {
+    label: 'Administración',
+    divisions: [
+      { value: 'recursos-humanos', label: 'Recursos Humanos' },
+      { value: 'contabilidad', label: 'Contabilidad' },
+      { value: 'compras', label: 'Compras y Suministros' },
+      { value: 'mantenimiento', label: 'Mantenimiento' }
+    ]
+  }
+};
+
 const SUPPORT_AREAS = [
   { value: 'soporte-tecnico', label: 'Soporte Técnico' },
   { value: 'redes-internet', label: 'Redes e Internet' },
@@ -26,6 +73,12 @@ const SupportForm: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
+  // Get available divisions based on selected department
+  const getAvailableDivisions = () => {
+    if (!formData.department) return [];
+    return DEPARTMENTS_AND_DIVISIONS[formData.department as keyof typeof DEPARTMENTS_AND_DIVISIONS]?.divisions || [];
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -33,6 +86,8 @@ const SupportForm: React.FC = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
+      // Reset division when department changes
+      ...(name === 'department' && { division: '' })
     }));
     
     // Clear error for this field if it exists
@@ -105,21 +160,26 @@ const SupportForm: React.FC = () => {
           <FormField
             id="department"
             label="Departamento solicitante"
-            type="text"
+            type="select"
             value={formData.department}
             onChange={handleChange}
             error={errors.department}
             required
+            options={Object.entries(DEPARTMENTS_AND_DIVISIONS).map(([value, dept]) => ({
+              value,
+              label: dept.label
+            }))}
           />
           
           <FormField
             id="division"
             label="División del solicitante"
-            type="text"
+            type="select"
             value={formData.division}
             onChange={handleChange}
             error={errors.division}
             required
+            options={getAvailableDivisions()}
           />
         </div>
         

@@ -17,7 +17,7 @@ const FormField: React.FC<FormFieldProps> = ({
       <label 
         htmlFor={id} 
         className="block text-sm font-medium mb-1"
-        style={{ color: '#000285' }}
+        style={{ color: '#000000' }}
       >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
